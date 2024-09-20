@@ -1,5 +1,8 @@
 package com.interdisciplinar.calculadoraEnergia.Configs;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class ConfiguracaoDeValor {
     private Double valorEnergia = 0.60; // Valor da energia por kWh (exemplo)
     private Double bandeira = 1.1; // Fatorr de bandeira (exemplo)

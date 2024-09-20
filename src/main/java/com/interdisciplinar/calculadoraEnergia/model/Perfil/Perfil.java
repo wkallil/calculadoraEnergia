@@ -2,17 +2,23 @@ package com.interdisciplinar.calculadoraEnergia.model.Perfil;
 
 import com.interdisciplinar.calculadoraEnergia.model.Aparelho.Aparelho;
 import com.interdisciplinar.calculadoraEnergia.model.Usuario.Usuario;
+import jakarta.persistence.*;
 
 import java.util.Set;
 
+@Entity
 public class Perfil {
 
+    @Id
     private Long id;
 
     private String nome;
 
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
+    @OneToMany(mappedBy = "perfil")
     private Set<Aparelho> aparelhos;
 
     public Long getId() {

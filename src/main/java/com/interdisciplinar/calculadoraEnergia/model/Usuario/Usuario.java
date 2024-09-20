@@ -1,15 +1,21 @@
 package com.interdisciplinar.calculadoraEnergia.model.Usuario;
 
 import com.interdisciplinar.calculadoraEnergia.model.Perfil.Perfil;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 import java.util.Set;
 
+@Entity
 public class Usuario {
 
+    @Id
     private String id;
 
     private String email;
 
+    @OneToMany(mappedBy = "usuario")
     private Set<Perfil> perfis;
 
 

@@ -5,10 +5,12 @@ import com.google.firebase.auth.FirebaseToken;
 import com.interdisciplinar.calculadoraEnergia.model.Usuario.Usuario;
 import com.interdisciplinar.calculadoraEnergia.repository.UsuarioRepository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
 import java.util.Optional;
 
+@Service
 public class UsuarioService {
 
     @Autowired

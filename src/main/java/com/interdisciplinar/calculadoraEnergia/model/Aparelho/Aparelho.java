@@ -1,9 +1,15 @@
 package com.interdisciplinar.calculadoraEnergia.model.Aparelho;
 
 import com.interdisciplinar.calculadoraEnergia.model.Perfil.Perfil;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
+@Entity
 public class Aparelho {
 
+    @Id
     private Long id;
     private String nome;
     private Double potencia;
@@ -11,6 +17,9 @@ public class Aparelho {
     private Integer diasPorMes;
     private Integer quantidade;
     private Double gastoMensal;
+
+    @ManyToOne
+    @JoinColumn(name = "perfil_id")
     private Perfil perfil;
 
     // Getters e Setters
