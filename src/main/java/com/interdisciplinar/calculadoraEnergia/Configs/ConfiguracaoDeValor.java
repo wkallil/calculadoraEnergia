@@ -2,7 +2,7 @@ package com.interdisciplinar.calculadoraEnergia.Configs;
 
 public class ConfiguracaoDeValor {
     private Double valorEnergia = 0.60; // Valor da energia por kWh (exemplo)
-    private Double bandeira = 1.1; // Fator de bandeira (exemplo)
+    private Double bandeira = 1.1; // Fatorr de bandeira (exemplo)
 
     public Double getValorEnergia() {
         return valorEnergia;
