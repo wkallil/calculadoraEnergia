@@ -27,7 +27,7 @@ public class PerfilService  {
     }
 
 
-    // Método para deletar perfil
+
     @Transactional
     public void deletarPerfil(Long perfilId, String usuarioId) {
         Perfil perfil = perfilRepository.findById(perfilId)
