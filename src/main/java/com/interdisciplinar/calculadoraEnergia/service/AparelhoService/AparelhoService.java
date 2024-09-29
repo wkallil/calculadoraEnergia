@@ -3,6 +3,8 @@ package com.interdisciplinar.calculadoraEnergia.service.AparelhoService;
 import com.interdisciplinar.calculadoraEnergia.Configs.ConfiguracaoDeValor;
 import com.interdisciplinar.calculadoraEnergia.model.Aparelho.Aparelho;
 import com.interdisciplinar.calculadoraEnergia.repository.AparelhoRepository.AparelhoRepository;
+import com.interdisciplinar.calculadoraEnergia.repository.PerfilRepository.PerfilRepository;
+import com.interdisciplinar.calculadoraEnergia.service.HistoricoService.HistoricoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,12 @@ public class AparelhoService {
 
     @Autowired
     private AparelhoRepository aparelhoRepository;
+
+    @Autowired
+    private PerfilRepository perfilRepository;  // Injeção do PerfilRepository
+
+    @Autowired
+    private HistoricoService historicoService;  // Injeção do HistoricoService
 
     @Autowired
     private ConfiguracaoDeValor configuracaoDeValor; // Injeção da configuração
@@ -55,6 +63,16 @@ public class AparelhoService {
         Double bandeira = configuracaoDeValor.getBandeira(); // Fator de bandeira
 
         // Calcular o custo total
-        return gastoTotal * valorEnergia * bandeira;
+        Double custoTotal = gastoTotal * valorEnergia * bandeira;
+
+        // Recuperar UID do perfil
+        String uid = perfilRepository.findById(perfilId)
+                .orElseThrow(() -> new RuntimeException("Perfil não encontrado"))
+                .getUsuario().getId();
+
+        // Registrar o histórico
+        historicoService.salvarHistorico(uid, custoTotal);
+
+        return custoTotal;
     }
 }

@@ -42,6 +42,6 @@ public class PerfilController {
         // Associar o perfil ao usuário autenticado
         perfil.setUsuario(usuario);
         return  perfilRepository.save(perfil);
-
     }
+
 }
