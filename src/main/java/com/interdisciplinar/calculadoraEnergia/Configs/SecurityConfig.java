@@ -9,15 +9,31 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @EnableWebSecurity
 public class SecurityConfig {
+    private static final String[] AUTH_WHITELIST = {
+            // -- Swagger UI v2
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            // -- Swagger UI v3 (OpenAPI)
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            // other public endpoints of your API may be appended to this array
+            "/login"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/auth/**").permitAll()  // use requestMatchers no lugar de antMatchers
+                        .requestMatchers(AUTH_WHITELIST).permitAll()  // use requestMatchers no lugar de antMatchers
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new FirebaseJwtFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new FirebaseJwtFilter(authenticationManager(http)), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

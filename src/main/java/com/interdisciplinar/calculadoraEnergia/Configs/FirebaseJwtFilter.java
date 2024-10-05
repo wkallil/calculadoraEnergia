@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -15,8 +16,11 @@ import java.io.IOException;
 
 public class FirebaseJwtFilter extends BasicAuthenticationFilter {
 
-    public FirebaseJwtFilter() {
-        super(null); // Apenas como exemplo, isso seria configurado no Security Config
+    private final AuthenticationManager authenticationManager;
+
+    public FirebaseJwtFilter(AuthenticationManager authenticationManager) {
+        super(authenticationManager);
+        this.authenticationManager = authenticationManager; // Apenas como exemplo, isso seria configurado no Security Config
     }
 
     @Override
