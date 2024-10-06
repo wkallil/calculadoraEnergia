@@ -17,13 +17,14 @@
         private UsuarioService usuarioService;
 
         @PostMapping("/authenticate")
-        public ResponseEntity<Usuario> authenticate(@RequestHeader("Authorization") String idToken) {
+        public ResponseEntity<Usuario> authenticate(@RequestHeader(value = "Authorization", required = false) String idToken) {
+            if (idToken == null || !idToken.startsWith("Bearer ")) {
+                return ResponseEntity.status(400).body(null); // Retorne um 400 se o token estiver ausente ou incorreto
+            }
 
             try {
                 // Remover "Bearer " se estiver presente
-                if (idToken.startsWith("Bearer ")) {
-                    idToken = idToken.substring(7);
-                }
+                idToken = idToken.substring(7);
                 Usuario usuario = usuarioService.getOrCreateUser(idToken);
                 return ResponseEntity.ok(usuario);
             } catch (Exception e) {
