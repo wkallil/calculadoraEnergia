@@ -1,17 +1,16 @@
 FROM eclipse-temurin:17-jdk
 
-# Instala o Maven
-RUN apt-get update && apt-get install -y maven
-
 # Defina o diretório de trabalho
 WORKDIR /app
 
-# Copia o pom.xml para o diretório de trabalho
+# Copia o pom.xml e o script mvnw para o diretório de trabalho
 COPY pom.xml .
+COPY mvnw ./
+COPY .mvn .mvn  # Certifique-se de copiar o diretório .mvn
 
-# Copia o script mvnw e dá permissão de execução
-COPY mvnw /app/mvnw
-RUN chmod +x /app/mvnw
+# Dê permissão de execução ao script mvnw
+RUN chmod +x mvnw
+RUN chmod +x ./mvnw && chmod +x ./mvnw.cmd
 
 # Baixa as dependências do Maven sem compilar o projeto
 RUN ./mvnw dependency:go-offline
