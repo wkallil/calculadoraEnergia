@@ -6,7 +6,7 @@ WORKDIR /app
 # Copia o pom.xml e o script mvnw para o diretório de trabalho
 COPY pom.xml .
 COPY mvnw ./
-COPY .mvn .mvn  # Certifique-se de copiar o diretório .mvn
+COPY .mvn .mvn
 
 # Dê permissão de execução ao script mvnw
 RUN chmod +x mvnw
