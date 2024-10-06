@@ -9,7 +9,6 @@ COPY mvnw ./
 COPY .mvn .mvn
 
 # Dê permissão de execução ao script mvnw
-RUN chmod +x mvnw
 RUN chmod +x ./mvnw && chmod +x ./mvnw.cmd
 
 # Baixa as dependências do Maven sem compilar o projeto
