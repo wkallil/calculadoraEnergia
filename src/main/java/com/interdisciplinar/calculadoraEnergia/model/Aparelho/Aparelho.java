@@ -1,5 +1,6 @@
 package com.interdisciplinar.calculadoraEnergia.model.Aparelho;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.interdisciplinar.calculadoraEnergia.model.Perfil.Perfil;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -20,6 +21,7 @@ public class Aparelho {
 
     @ManyToOne
     @JoinColumn(name = "perfil_id")
+    @JsonManagedReference
     private Perfil perfil;
 
     // Getters e Setters

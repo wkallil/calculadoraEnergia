@@ -1,5 +1,6 @@
 package com.interdisciplinar.calculadoraEnergia.model.Perfil;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.interdisciplinar.calculadoraEnergia.model.Aparelho.Aparelho;
 import com.interdisciplinar.calculadoraEnergia.model.Usuario.Usuario;
 import jakarta.persistence.*;
@@ -16,9 +17,11 @@ public class Perfil {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
+    @JsonBackReference
     private Usuario usuario;
 
     @OneToMany(mappedBy = "perfil")
+    @JsonBackReference
     private Set<Aparelho> aparelhos;
 
     public Long getId() {

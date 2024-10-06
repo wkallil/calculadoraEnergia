@@ -12,7 +12,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/historico")
+@RequestMapping("/historico")
 public class HistoricoController {
 
     @Autowired

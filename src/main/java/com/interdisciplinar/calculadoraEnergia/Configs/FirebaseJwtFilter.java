@@ -18,6 +18,19 @@ public class FirebaseJwtFilter extends BasicAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
 
+    private static final String[] AUTH_WHITELIST = {
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/login"
+    };
+
     public FirebaseJwtFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
         this.authenticationManager = authenticationManager; // Apenas como exemplo, isso seria configurado no Security Config
@@ -26,6 +39,16 @@ public class FirebaseJwtFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+
+        String requestURI = request.getRequestURI();
+
+        // Verifica se a URL está na whitelist
+        for (String path : AUTH_WHITELIST) {
+            if (requestURI.startsWith(path)) {
+                chain.doFilter(request, response);
+                return; // Saia do método sem autenticar
+            }
+        }
 
         String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {

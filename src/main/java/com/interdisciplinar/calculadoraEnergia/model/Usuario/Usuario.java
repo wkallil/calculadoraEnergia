@@ -1,5 +1,6 @@
 package com.interdisciplinar.calculadoraEnergia.model.Usuario;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.interdisciplinar.calculadoraEnergia.model.Perfil.Perfil;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -16,6 +17,7 @@ public class Usuario {
     private String email;
 
     @OneToMany(mappedBy = "usuario")
+    @JsonManagedReference
     private Set<Perfil> perfis;
 
 
