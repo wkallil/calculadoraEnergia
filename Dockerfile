@@ -1,5 +1,5 @@
-# Use a imagem base com JDK 21
-FROM eclipse-temurin:21-jdk
+# Use a imagem base com JDK 17
+FROM eclipse-temurin:17-jdk
 
 # Define o diretório de trabalho
 WORKDIR /app
