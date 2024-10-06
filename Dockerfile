@@ -9,13 +9,13 @@ COPY .mvn/ .mvn
 COPY mvnw pom.xml /app/
 
 # Dá permissão de execução para o Maven wrapper
-RUN chmod +x ./mvnw
-
-# Baixa as dependências do Maven sem compilar o projeto (fase de dependencies resolve)
-RUN ./mvnw dependency:go-offline
+RUN chmod +x /app/mvnw
 
 # Copia todo o conteúdo do projeto para o diretório de trabalho
 COPY . /app
+
+# Baixa as dependências do Maven sem compilar o projeto (fase de dependencies resolve)
+RUN ./mvnw dependency:go-offline
 
 # Executa o comando Maven para compilar e empacotar a aplicação (comando específico para build)
 RUN ./mvnw clean package -DskipTests
