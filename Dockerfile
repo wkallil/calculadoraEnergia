@@ -4,8 +4,9 @@ FROM eclipse-temurin:17-jdk
 # Define o diretório de trabalho
 WORKDIR /app
 
-# Copia o arquivo pom.xml e outros arquivos de configuração do Maven
-COPY pom.xml /app
+# Copia o Maven wrapper (mvnw) e os arquivos de configuração
+COPY .mvn/ .mvn
+COPY mvnw pom.xml /app/
 
 # Baixa as dependências do Maven sem compilar o projeto (fase de dependencies resolve)
 RUN ./mvnw dependency:go-offline
