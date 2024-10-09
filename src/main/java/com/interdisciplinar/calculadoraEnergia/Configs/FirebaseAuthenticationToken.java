@@ -1,37 +1,34 @@
 package com.interdisciplinar.calculadoraEnergia.Configs;
 
+import com.google.firebase.auth.FirebaseToken;
+import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Collection;
+import java.util.Collections;
 
 public class FirebaseAuthenticationToken extends AbstractAuthenticationToken {
+    private final FirebaseToken firebaseToken;
+    @Getter
+    private final String uid;
 
-    private final Object principal;
-    private Object credentials;
-
-    public FirebaseAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
-        super(authorities);
-        this.principal = principal;
-        this.credentials = credentials;
-        super.setAuthenticated(true);  // Define o token como autenticado, pois o Firebase já validou o token JWT
+    public FirebaseAuthenticationToken(FirebaseToken firebaseToken) {
+        super(Collections.singletonList(new SimpleGrantedAuthority("USER"))); // você pode ajustar as permissões aqui
+        this.firebaseToken = firebaseToken;
+        this.uid = firebaseToken.getUid();
+        setAuthenticated(true); // marca o token como autenticado
     }
 
     @Override
     public Object getCredentials() {
-        return credentials;
+        return null; // O token já foi validado pelo Firebase, não há necessidade de credenciais adicionais.
     }
 
     @Override
     public Object getPrincipal() {
-        return principal;
+        return this.firebaseToken;
     }
 
-    @Override
-    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-        if (isAuthenticated) {
-            throw new IllegalArgumentException("Cannot set this token to trusted - use constructor which takes a GrantedAuthority list instead");
-        }
-        super.setAuthenticated(false);
-    }
 }
+
