@@ -1,6 +1,7 @@
 package com.interdisciplinar.calculadoraEnergia.controller.statusController;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,5 +28,10 @@ public class StatusController {
     @GetMapping
     public String getStatus() {
         return "Autorizado";
+    }
+
+    @PostMapping
+    public String postStatus() {
+        return "Post request received";
     }
 }
