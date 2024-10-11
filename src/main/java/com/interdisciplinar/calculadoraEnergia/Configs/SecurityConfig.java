@@ -39,14 +39,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .anyRequest().authenticated())
-                .csrf(csrf -> csrf.disable())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                        .anyRequest().permitAll()) // Permitir todas as requisições
+                .csrf(csrf -> csrf.disable()) // Desabilitar CSRF
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())) // Manter a autenticação JWT caso necessário
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // Política de sessões stateless
 
         return http.build();
     }
+
     @Bean
     public JwtDecoder jwtDecoder() throws Exception {
         RSAPublicKey publicKey = firebaseKeyProvider.getPublicKey();
