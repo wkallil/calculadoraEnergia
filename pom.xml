@@ -104,6 +104,17 @@
 			<artifactId>postgresql</artifactId>
 			<version>42.6.0</version>
 		</dependency>
+		<!-- Dependência do Nimbus JOSE JWT para manipulação de JWT -->
+		<dependency>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>nimbus-jose-jwt</artifactId>
+			<version>9.24</version> <!-- Verifique a versão mais recente -->
+		</dependency>
+		<!-- Dependência do Spring Security OAuth2 para suporte a JWT -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
