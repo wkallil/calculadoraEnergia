@@ -1,5 +1,6 @@
 package com.interdisciplinar.calculadoraEnergia.Configs;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -12,11 +13,12 @@ import java.util.Map;
 
 @Service
 public class FirebaseKeyProvider {
-    private static final String FIREBASE_PUBLIC_KEY_URL = "${firebase.public.key}";
+    @Value("${firebase.public.key}")
+    private String firebasePublicKeyUrl;
 
     public RSAPublicKey getPublicKey() throws Exception {
         RestTemplate restTemplate = new RestTemplate();
-        Map<String, String> keys = restTemplate.getForObject(FIREBASE_PUBLIC_KEY_URL, Map.class);
+        Map<String, String> keys = restTemplate.getForObject(firebasePublicKeyUrl, Map.class);
 
         // Aqui você pode escolher a chave que deseja usar
         // Normalmente, o Firebase fornece várias chaves. Você pode precisar escolher a correta com base no 'kid' do token.
