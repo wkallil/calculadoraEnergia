@@ -2,6 +2,7 @@ package com.interdisciplinar.calculadoraEnergia.Configs;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -10,8 +11,16 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
+@Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final FirebaseAuthenticationFilter firebaseAuthenticationFilter;
+
+    public SecurityConfig(FirebaseAuthenticationFilter firebaseAuthenticationFilter) {
+        this.firebaseAuthenticationFilter = firebaseAuthenticationFilter;
+    }
+
     private static final String[] AUTH_WHITELIST = {
             // -- Swagger UI v2
             "/v2/api-docs",
@@ -29,29 +38,18 @@ public class SecurityConfig {
             "/users/authenticate"
     };
 
-    @Autowired
-    private FirebaseTokenService firebaseTokenService;
-
-
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http
-                .csrf().disable()  // Desabilitar CSRF para API
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Não usar sessão
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Desabilitar sessões
                 .and()
-                .authorizeRequests()
-                .requestMatchers(AUTH_WHITELIST).permitAll() // Permitir endpoints públicos
-                .anyRequest().authenticated() // Proteger os outros endpoints
-                .and()
-                .addFilterBefore(new FirebaseAuthenticationFilter(firebaseTokenService), AbstractPreAuthenticatedProcessingFilter.class);
-        return http.build();
-    }
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers(AUTH_WHITELIST).permitAll() // Endpoints públicos
+                        .anyRequest().authenticated() // Protege os demais endpoints
+                )
+                .addFilterBefore(firebaseAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Adiciona o filtro JWT
 
-    // Caso precise de um AuthenticationManager:
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManager.class);
+        return http.build();
     }
 }
