@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.security.KeyFactory;
+import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
@@ -20,14 +21,16 @@ public class FirebaseKeyProvider {
         // Aqui você pode escolher a chave que deseja usar
         // Normalmente, o Firebase fornece várias chaves. Você pode precisar escolher a correta com base no 'kid' do token.
         String publicKeyPEM = keys.values().iterator().next(); // Pega a primeira chave como exemplo
-        String publicKeyBase64 = publicKeyPEM.replace("-----BEGIN CERTIFICATE-----", "")
+        String publicKeyBase64 = publicKeyPEM
+                .replace("-----BEGIN CERTIFICATE-----", "")
                 .replace("-----END CERTIFICATE-----", "")
                 .replaceAll("\\s+", "");
 
-        byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyBase64);
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
+        byte[] decoded = Base64.getDecoder().decode(publicKeyBase64);
+        X509EncodedKeySpec spec = new X509EncodedKeySpec(decoded);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PublicKey publicKey = keyFactory.generatePublic(spec);
 
-        return (RSAPublicKey) keyFactory.generatePublic(keySpec);
+        return (RSAPublicKey) publicKey;
     }
 }

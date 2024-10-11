@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
@@ -28,17 +30,8 @@ public class SecurityConfig {
 
     private final FirebaseKeyProvider firebaseKeyProvider;
 
-    @Value("${firebase.public.key}") // Defina a chave pública do Firebase aqui
-    private RSAPublicKey publicKey;
-
-    @Autowired
     public SecurityConfig(FirebaseKeyProvider firebaseKeyProvider) {
         this.firebaseKeyProvider = firebaseKeyProvider;
-    }
-
-    @Bean
-    public RSAPublicKey publicKey() throws Exception {
-        return firebaseKeyProvider.getPublicKey();
     }
 
 
@@ -53,6 +46,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
+    }
+    @Bean
+    public JwtDecoder jwtDecoder() throws Exception {
+        RSAPublicKey publicKey = firebaseKeyProvider.getPublicKey();
+        return NimbusJwtDecoder.withPublicKey(publicKey).build();
     }
 
     @Bean
