@@ -21,7 +21,6 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        // Obtém o token do cabeçalho Authorization
         String authHeader = request.getHeader("Authorization");
         String token = null;
 
@@ -34,23 +33,18 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
                 // Verifica o token com o Firebase
                 var firebaseToken = firebaseTokenService.verifyToken(token);
 
-                // Cria um objeto FirebaseUserDetails com base no UID do token
-                var userDetails = new FirebaseUserDetails(firebaseToken.getUid());
-
-                // Cria o token de autenticação do Spring Security
-                var auth = new FirebaseAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                // Cria o token de autenticação do Spring Security com base no FirebaseToken
+                var auth = new FirebaseAuthenticationToken(firebaseToken);
 
                 // Coloca o token no contexto de segurança do Spring
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception e) {
-                // Limpa o contexto de segurança em caso de erro e retorna 401 Unauthorized
                 SecurityContextHolder.clearContext();
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
         }
 
-        // Prossegue com a cadeia de filtros
         filterChain.doFilter(request, response);
     }
 }

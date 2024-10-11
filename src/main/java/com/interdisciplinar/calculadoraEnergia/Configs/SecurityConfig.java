@@ -1,5 +1,6 @@
 package com.interdisciplinar.calculadoraEnergia.Configs;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,7 +29,10 @@ public class SecurityConfig {
             "/users/authenticate"
     };
 
+    @Autowired
     private FirebaseTokenService firebaseTokenService;
+
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

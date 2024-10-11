@@ -14,10 +14,10 @@ public class FirebaseAuthenticationToken extends AbstractAuthenticationToken {
     private final String uid;
 
     public FirebaseAuthenticationToken(FirebaseToken firebaseToken) {
-        super(Collections.singletonList(new SimpleGrantedAuthority("USER"))); // você pode ajustar as permissões aqui
+        super(Collections.emptyList()); // Lista vazia de autoridades
         this.firebaseToken = firebaseToken;
         this.uid = firebaseToken.getUid();
-        setAuthenticated(true); // marca o token como autenticado
+        setAuthenticated(true); // Marca o token como autenticado
     }
 
     @Override
