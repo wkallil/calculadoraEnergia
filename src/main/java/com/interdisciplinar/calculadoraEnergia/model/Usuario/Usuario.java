@@ -8,14 +8,29 @@ import jakarta.persistence.OneToMany;
 
 import java.util.Set;
 
+/**
+ * Entidade que representa um usuário no sistema.
+ * Um usuário pode ter vários {@link Perfil} associados a ele.
+ *
+ * @author Whesley Kallil
+ */
 @Entity
 public class Usuario {
 
+    /**
+     * Identificador único do usuário (UID).
+     */
     @Id
     private String id;
 
+    /**
+     * Endereço de email do usuário.
+     */
     private String email;
 
+    /**
+     * Conjunto de perfis associados ao usuário.
+     */
     @OneToMany(mappedBy = "usuario")
     @JsonManagedReference
     private Set<Perfil> perfis;

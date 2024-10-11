@@ -7,14 +7,31 @@ import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;
 
+/**
+ * Entidade que registra o histórico de consumo de energia do usuário.
+ * O histórico contém previsões de preço e um timestamp do momento da geração.
+ *
+ * @author Whesley Kallil
+ */
 @Entity
 public class Historico {
+    /**
+     * Identificador único do registro de histórico.
+     */
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
-
+    /**
+     * Identificador do usuário relacionado ao histórico.
+     */
     private String uid;
+    /**
+     * Previsão de preço do consumo de energia.
+     */
     private Double previsaoDePreco;
+    /**
+     * Timestamp do momento em que o registro foi criado.
+     */
     private LocalDateTime timestamp;
 
     // Construtores, getters e setters

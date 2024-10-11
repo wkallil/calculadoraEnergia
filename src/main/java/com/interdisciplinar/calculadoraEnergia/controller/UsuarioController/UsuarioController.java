@@ -9,6 +9,17 @@
     import org.springframework.web.bind.annotation.RequestMapping;
     import org.springframework.web.bind.annotation.RestController;
 
+
+    /**
+     * Controlador REST para gerenciar a autenticação de usuários via Firebase.
+     * Através deste controlador, é possível autenticar usuários com um ID Token do Firebase e
+     * buscar ou criar usuários no sistema.
+     *
+     * Endpoints:
+     * - {@code POST /users/authenticate}: Autentica o usuário com base no ID Token fornecido no cabeçalho "Authorization".
+     *
+     * @author Whesley Kallil
+     */
     @RestController
     @RequestMapping("/users")
     public class UsuarioController {
@@ -16,6 +27,14 @@
         @Autowired
         private UsuarioService usuarioService;
 
+        /**
+         * Endpoint para autenticar um usuário com base no token de autenticação fornecido no cabeçalho "Authorization".
+         * O token deve ser precedido por "Bearer ". Caso o token esteja ausente ou incorreto, retorna uma resposta HTTP 400.
+         * Se o token for inválido, retorna uma resposta HTTP 401.
+         *
+         * @param idToken Token de autenticação Firebase enviado no cabeçalho "Authorization".
+         * @return A entidade {@link Usuario} autenticada ou uma resposta de erro apropriada.
+         */
         @PostMapping("/authenticate")
         public ResponseEntity<Usuario> authenticate(@RequestHeader(value = "Authorization", required = false) String idToken) {
             if (idToken == null || !idToken.startsWith("Bearer ")) {

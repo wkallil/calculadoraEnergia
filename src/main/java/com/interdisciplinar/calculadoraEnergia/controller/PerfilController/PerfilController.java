@@ -12,6 +12,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
+/**
+ * Controlador REST responsável por gerenciar perfis de usuários.
+ * Permite criar perfis associados a um usuário autenticado via Firebase.
+ *
+ * Endpoints:
+ * - {@code POST /perfil/criar}: Cria um novo perfil associado ao usuário autenticado.
+ *
+ * O controlador utiliza a autenticação Firebase para vincular o perfil ao usuário correspondente.
+ *
+ * @author Whesley Kallil
+ */
 @RestController
 @RequestMapping("/perfil")
 public class PerfilController {
@@ -21,6 +33,16 @@ public class PerfilController {
     @Autowired
     private PerfilRepository perfilRepository;
 
+
+    /**
+     * Endpoint para criar um novo perfil para o usuário autenticado.
+     * O usuário é identificado com base no token de autenticação do Firebase. Se o usuário não existir,
+     * ele é criado automaticamente e o perfil é associado a esse usuário.
+     *
+     * @param perfil Objeto {@link Perfil} contendo as informações do perfil a ser criado.
+     * @param authentication Objeto de autenticação contendo o token do Firebase.
+     * @return O perfil recém-criado e associado ao usuário autenticado.
+     */
     @PostMapping("/criar")
     public Perfil criarPerfil(@RequestBody Perfil perfil, Authentication authentication){
 
