@@ -4,8 +4,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayInputStream;
 import java.security.KeyFactory;
 import java.security.PublicKey;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
@@ -29,10 +32,14 @@ public class FirebaseKeyProvider {
                 .replaceAll("\\s+", "");
 
         byte[] decoded = Base64.getDecoder().decode(publicKeyBase64);
-        X509EncodedKeySpec spec = new X509EncodedKeySpec(decoded);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        PublicKey publicKey = keyFactory.generatePublic(spec);
 
-        return (RSAPublicKey) publicKey;
+        // Use CertificateFactory para converter o certificado X509
+        CertificateFactory factory = CertificateFactory.getInstance("X.509");
+        X509Certificate cert = (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(decoded));
+
+        // Extraímos a chave pública do certificado X509
+        RSAPublicKey publicKey = (RSAPublicKey) cert.getPublicKey();
+
+        return publicKey;
     }
 }
