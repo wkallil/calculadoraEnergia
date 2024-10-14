@@ -72,7 +72,6 @@ public class JwtUtil {
         }
     }
 
-    // Método para validar o JWT e extrair os claims
     public JWTClaimsSet validateAndExtractClaims(String token) throws ParseException, BadJOSEException, IOException, CertificateException, JOSEException {
         logger.info("Validando e extraindo claims do JWT.");
 
@@ -82,15 +81,17 @@ public class JwtUtil {
 
         RSAPublicKey publicKey = getPublicKey(kid);
 
-        ConfigurableJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
+        // Usar diretamente a chave pública para a verificação
         JWSVerificationKeySelector<SecurityContext> keySelector = new JWSVerificationKeySelector<>(
                 signedJWT.getHeader().getAlgorithm(),
-                (joseHeader, context) -> Collections.singletonList((JWK) publicKey)
+                (joseHeader, context) -> Collections.singletonList((JWK) publicKey)  // Usar RSAPublicKey diretamente
         );
 
+        ConfigurableJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
         jwtProcessor.setJWSKeySelector(keySelector);
         logger.info("JWTProcessor configurado para validação.");
 
+        // Processar e validar os claims do JWT
         return jwtProcessor.process(signedJWT, null);
     }
 }
