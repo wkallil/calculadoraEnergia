@@ -5,6 +5,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +23,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);  // Adicionando logger
+
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
@@ -31,15 +35,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            logger.warn("Cabeçalho de autorização ausente ou inválido.");
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = authorizationHeader.substring(7);
+        logger.info("Token extraído: " + token);
         try {
             JWTClaimsSet claims = jwtUtil.validateAndExtractClaims(token);
             String email = (String) claims.getClaim("email");
             String userId = (String) claims.getClaim("sub");
+
+            logger.info("JWT Claims - Email: " + email + ", UserID: " + userId);
 
             if (email != null) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -47,9 +55,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 );
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                logger.info("Usuário autenticado com sucesso: " + email);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Falha na autenticação do token JWT: ", e);
             SecurityContextHolder.clearContext();
         }
 
