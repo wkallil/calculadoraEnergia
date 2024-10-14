@@ -22,8 +22,7 @@ import java.util.Map;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-
-    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);  // Adicionando logger
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
@@ -42,7 +41,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = authorizationHeader.substring(7);
         logger.info("Token extraído: " + token);
+
         try {
+            // Validar e extrair claims do token usando JwtUtil
             JWTClaimsSet claims = jwtUtil.validateAndExtractClaims(token);
             String email = (String) claims.getClaim("email");
             String userId = (String) claims.getClaim("sub");
@@ -50,6 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             logger.info("JWT Claims - Email: " + email + ", UserID: " + userId);
 
             if (email != null) {
+                // Autenticação com as authorities adequadas
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         email, null, List.of(new SimpleGrantedAuthority("ROLE_USER"))
                 );
