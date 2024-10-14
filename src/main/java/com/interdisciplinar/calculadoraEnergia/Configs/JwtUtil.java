@@ -3,6 +3,8 @@ package com.interdisciplinar.calculadoraEnergia.Configs;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -72,26 +74,28 @@ public class JwtUtil {
         }
     }
 
-    public JWTClaimsSet validateAndExtractClaims(String token) throws ParseException, BadJOSEException, IOException, CertificateException, JOSEException {
+    public JWTClaimsSet validateAndExtractClaims(String token) throws ParseException, BadJOSEException, JOSEException, IOException, CertificateException {
         logger.info("Validando e extraindo claims do JWT.");
 
+        // Parsear o token JWT
         SignedJWT signedJWT = SignedJWT.parse(token);
         String kid = signedJWT.getHeader().getKeyID();
         logger.info("JWT 'kid' extraído: " + kid);
 
+        // Obter a chave pública para o 'kid'
         RSAPublicKey publicKey = getPublicKey(kid);
 
-        // Usar diretamente a chave pública para a verificação
-        JWSVerificationKeySelector<SecurityContext> keySelector = new JWSVerificationKeySelector<>(
-                signedJWT.getHeader().getAlgorithm(),
-                (joseHeader, context) -> Collections.singletonList((JWK) publicKey)  // Usar RSAPublicKey diretamente
-        );
+        // Criar um verificador RSA com a chave pública
+        JWSVerifier verifier = new RSASSAVerifier(publicKey);
 
-        ConfigurableJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
-        jwtProcessor.setJWSKeySelector(keySelector);
-        logger.info("JWTProcessor configurado para validação.");
+        // Verificar a assinatura
+        if (!signedJWT.verify(verifier)) {
+            throw new BadJOSEException("Assinatura JWT inválida.");
+        }
 
-        // Processar e validar os claims do JWT
-        return jwtProcessor.process(signedJWT, null);
+        logger.info("JWT verificado com sucesso.");
+
+        // Retornar os claims após a verificação bem-sucedida
+        return signedJWT.getJWTClaimsSet();
     }
 }
