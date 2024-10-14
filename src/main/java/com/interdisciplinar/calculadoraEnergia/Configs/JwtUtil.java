@@ -11,6 +11,8 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -23,37 +25,54 @@ import java.util.Collections;
 public class JwtUtil {
 
     private static final String JWKS_URL = "https://www.googleapis.com/oauth2/v3/certs";
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);  // Adicionando logger
 
     // Método para obter a chave pública com base no 'kid' presente no header do JWT
     public RSAPublicKey getPublicKey(String kid) throws IOException, ParseException, JOSEException {
+        logger.info("Recuperando chave pública para o 'kid': " + kid);
+
         JWKSet jwkSet = JWKSet.load(new URL(JWKS_URL));
+        logger.info("JWKSet carregado com sucesso do JWKS_URL.");
+
         JWK jwk = jwkSet.getKeyByKeyId(kid);
+        if (jwk == null) {
+            logger.error("Nenhuma chave encontrada para o 'kid': " + kid);
+            throw new IllegalArgumentException("Chave não encontrada para o 'kid': " + kid);
+        }
+
+        logger.info("Chave JWK encontrada para o 'kid': " + kid);
 
         // Verificar se a chave é do tipo RSA e convertê-la para RSAPublicKey
         if (jwk instanceof RSAKey) {
-            return ((RSAKey) jwk).toRSAPublicKey();
+            RSAPublicKey publicKey = ((RSAKey) jwk).toRSAPublicKey();
+            logger.info("Chave pública RSA obtida com sucesso.");
+            return publicKey;
         }
 
-        throw new IllegalArgumentException("Invalid JWK key");
+        logger.error("Chave JWK não é do tipo RSA.");
+        throw new IllegalArgumentException("Chave JWK inválida");
     }
 
     // Método para validar o JWT e extrair os claims
     public JWTClaimsSet validateAndExtractClaims(String token) throws ParseException, BadJOSEException, IOException, JOSEException {
+        logger.info("Validando e extraindo claims do JWT.");
+
         // Parse do JWT
         SignedJWT signedJWT = SignedJWT.parse(token);
-        String kid = signedJWT.getHeader().getKeyID();  // Pega o 'kid' do header do JWT
+        String kid = signedJWT.getHeader().getKeyID();
+        logger.info("JWT 'kid' extraído: " + kid);
+
         RSAPublicKey publicKey = getPublicKey(kid);
 
-        // Configuração do JWTProcessor para verificar a assinatura
         ConfigurableJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
 
-        // O lambda agora retorna uma lista de chaves, conforme o esperado
         JWSVerificationKeySelector<SecurityContext> keySelector = new JWSVerificationKeySelector<>(
                 signedJWT.getHeader().getAlgorithm(),
-                (joseHeader, context) -> Collections.singletonList((JWK) publicKey) // Aqui retornamos uma lista contendo a chave pública
+                (joseHeader, context) -> Collections.singletonList((JWK) publicKey)
         );
 
         jwtProcessor.setJWSKeySelector(keySelector);
+        logger.info("JWTProcessor configurado para validação.");
 
         // Processar e validar os claims do JWT
         return jwtProcessor.process(signedJWT, null);
