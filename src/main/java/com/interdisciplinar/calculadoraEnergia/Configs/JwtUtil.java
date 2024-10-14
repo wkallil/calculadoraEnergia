@@ -24,7 +24,7 @@ import java.util.Collections;
 @Component
 public class JwtUtil {
 
-    private static final String JWKS_URL = "https://www.googleapis.com/oauth2/v3/certs";
+    private static final String JWKS_URL = "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com";
     private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);  // Adicionando logger
 
     // Método para obter a chave pública com base no 'kid' presente no header do JWT
