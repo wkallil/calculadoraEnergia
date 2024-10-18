@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,12 +43,9 @@ public class UsuarioController {
     }
 
     @PostMapping("/me")
-    public ResponseEntity<Usuario> criarUsuario(Authentication authentication) {
-        if (authentication == null ||!authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public ResponseEntity<Usuario> criarUsuario(@AuthenticationPrincipal UserDetails userDetails) {
 
-        String email = (String) authentication.getPrincipal(); // Método para extrair email do token
+        String email = userDetails.getUsername(); // Método para extrair email do token
         Usuario usuario = usuarioService.criarUsuario(email);
         return ResponseEntity.ok(usuario);
     }
