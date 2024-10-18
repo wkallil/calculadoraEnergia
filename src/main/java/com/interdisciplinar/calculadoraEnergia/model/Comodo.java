@@ -15,7 +15,7 @@ public class Comodo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private String nome;
 

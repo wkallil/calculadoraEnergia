@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface HistoricoMensalRepository extends JpaRepository<HistoricoMensal, Long> {
+public interface HistoricoMensalRepository extends JpaRepository<HistoricoMensal, String> {
     List<HistoricoMensal> findByUsuarioAndMes(Usuario usuario, LocalDate mes);
     List<HistoricoMensal> findByPerfilAndMes(Perfil perfil, LocalDate mes);
     List<HistoricoMensal> findByUsuario(Usuario usuario);
