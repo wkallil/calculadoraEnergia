@@ -1,5 +1,6 @@
 package com.interdisciplinar.calculadoraEnergia.service;
 
+import com.interdisciplinar.calculadoraEnergia.model.Comodo;
 import com.interdisciplinar.calculadoraEnergia.model.Perfil;
 import com.interdisciplinar.calculadoraEnergia.model.Usuario;
 import com.interdisciplinar.calculadoraEnergia.repository.PerfilRepository;
@@ -29,11 +30,20 @@ public class PerfilService {
         return usuario.getPerfis();
     }
 
-    public Perfil criarPerfil(JwtAuthenticationToken authentication, Perfil perfil) {
-        var usuario = usuarioRepository.findById(Long.valueOf(authentication.getName()))
-                .orElseThrow(() -> new RuntimeException(""));
-        perfil.setUsuario(usuario);
-        return perfilRepository.save(perfil);
+    @Transactional
+    public Perfil criarPerfilParaUsuario(Usuario usuario, Perfil nomePerfil) {
+        // Cria um novo perfil associado ao usuário
+        Perfil novoPerfil = new Perfil(nomePerfil, usuario);
+
+        // Adiciona um cômodo padrão ao perfil (opcional)
+        Comodo comodoPadrao = new Comodo("Cômodo Padrão", novoPerfil);
+        novoPerfil.getComodos().add(comodoPadrao);
+
+        // Persiste o perfil e o cômodo
+        usuario.getPerfis().add(novoPerfil);
+        usuarioRepository.save(usuario);
+
+        return novoPerfil;
     }
 
     public Perfil atualizarPerfil(Long perfilId, Perfil perfilAtualizado) {
