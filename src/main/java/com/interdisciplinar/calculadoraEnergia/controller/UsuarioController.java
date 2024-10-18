@@ -26,5 +26,9 @@ public class UsuarioController {
         UsuarioDTO usuario = usuarioService.buscarOuCriarUsuarioPorEmail(email);
         return ResponseEntity.ok(usuario);
     }
-
+    @GetMapping("/user")
+    public String getUserInfo(Authentication authentication) {
+        String email = (String) authentication.getPrincipal();
+        return "Email do usuário: " + email;
+    }
 }
