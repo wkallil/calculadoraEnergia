@@ -46,6 +46,13 @@ public class UsuarioService {
         }
     }
 
+    public Usuario criarUsuario(String email) {
+        Usuario novoUsuario = new Usuario();
+        novoUsuario.setEmail(email);
+        return usuarioRepository.save(novoUsuario);
+
+    }
+
     public UsuarioDTO mapToDTO(Usuario usuario) {
         // Implementação simples para mapear entidades para DTO
         return new UsuarioDTO(

@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,4 +39,16 @@ public class UsuarioController {
         String email = (String) authentication.getPrincipal();
         return "Email do usuário: " + email;
     }
+
+    @PostMapping("/me")
+    public ResponseEntity<Usuario> criarUsuario(Authentication authentication) {
+        if (authentication == null ||!authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String email = (String) authentication.getPrincipal(); // Método para extrair email do token
+        Usuario usuario = usuarioService.criarUsuario(email);
+        return ResponseEntity.ok(usuario);
+    }
+
 }
