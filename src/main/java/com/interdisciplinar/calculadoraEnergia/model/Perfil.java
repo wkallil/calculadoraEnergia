@@ -28,7 +28,7 @@ public class Perfil {
     @JsonManagedReference
     private Set<Comodo> comodos = new HashSet<>();
 
-    public Perfil(Perfil nomePerfil, Usuario usuario) {}
+    public Perfil() {}
 
     public Perfil(String nome, Usuario usuario) {
         this.nome = nome;

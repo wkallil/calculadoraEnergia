@@ -31,7 +31,7 @@ public class PerfilService {
     }
 
     @Transactional
-    public Perfil criarPerfilParaUsuario(Usuario usuario, Perfil nomePerfil) {
+    public Perfil criarPerfilParaUsuario(Usuario usuario, String nomePerfil) {
         // Cria um novo perfil associado ao usuário
         Perfil novoPerfil = new Perfil(nomePerfil, usuario);
 

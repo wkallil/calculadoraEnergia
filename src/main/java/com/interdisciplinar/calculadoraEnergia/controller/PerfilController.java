@@ -28,7 +28,7 @@ public class PerfilController {
     }
 
     @PostMapping("/criar")
-    public ResponseEntity<Perfil> criarPerfil(@RequestParam Perfil nomePerfil, Authentication authentication) {
+    public ResponseEntity<Perfil> criarPerfil(@RequestParam String nomePerfil, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
