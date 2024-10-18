@@ -26,11 +26,11 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioDTO buscarOuCriarUsuarioPorEmail(String email) {
+    public Usuario buscarOuCriarUsuarioPorEmail(String email) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
 
         if (usuarioOpt.isPresent()) {
-            return mapToDTO(usuarioOpt.get());
+            return usuarioOpt.get(); // Retorna o usuário existente
         } else {
             // Criação do novo usuário com perfil e cômodo padrão
             Usuario novoUsuario = new Usuario(email);
@@ -42,7 +42,7 @@ public class UsuarioService {
 
             usuarioRepository.save(novoUsuario);
 
-            return mapToDTO(novoUsuario);
+            return novoUsuario; // Retorna o novo usuário criado
         }
     }
 

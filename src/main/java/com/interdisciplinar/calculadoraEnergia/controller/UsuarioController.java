@@ -1,7 +1,9 @@
 package com.interdisciplinar.calculadoraEnergia.controller;
 
 import com.interdisciplinar.calculadoraEnergia.dto.UsuarioDTO;
+import com.interdisciplinar.calculadoraEnergia.model.Usuario;
 import com.interdisciplinar.calculadoraEnergia.service.UsuarioService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
@@ -21,11 +23,16 @@ public class UsuarioController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UsuarioDTO> getUsuario(Authentication authentication) {
+    public ResponseEntity<Usuario> getUsuario(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         String email = (String) authentication.getPrincipal(); // Método para extrair email do token
-        UsuarioDTO usuario = usuarioService.buscarOuCriarUsuarioPorEmail(email);
+        Usuario usuario = usuarioService.buscarOuCriarUsuarioPorEmail(email);
         return ResponseEntity.ok(usuario);
     }
+
     @GetMapping("/user")
     public String getUserInfo(Authentication authentication) {
         String email = (String) authentication.getPrincipal();
