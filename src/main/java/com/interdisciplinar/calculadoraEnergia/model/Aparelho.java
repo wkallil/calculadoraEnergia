@@ -10,7 +10,7 @@ public class Aparelho {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     private String nome;
     private Double potencia; // em Watts
