@@ -1,17 +1,13 @@
 package com.interdisciplinar.calculadoraEnergia.service;
 
-import com.interdisciplinar.calculadoraEnergia.dto.AparelhoDTO;
-import com.interdisciplinar.calculadoraEnergia.dto.ComodoDTO;
-import com.interdisciplinar.calculadoraEnergia.dto.PerfilDTO;
 import com.interdisciplinar.calculadoraEnergia.model.Perfil;
 import com.interdisciplinar.calculadoraEnergia.model.Usuario;
 import com.interdisciplinar.calculadoraEnergia.repository.PerfilRepository;
 import com.interdisciplinar.calculadoraEnergia.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
 import java.util.Set;
-import java.util.stream.Collectors;
+
 
 @Service
 public class PerfilService {
@@ -24,27 +20,27 @@ public class PerfilService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public Set<PerfilDTO> buscarPerfisPorUsuarioId(Long usuarioId) {
+    public Set<Perfil> buscarPerfisPorUsuarioId(Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        return usuario.getPerfis().stream().map(this::mapToDTO).collect(Collectors.toSet());
+        return usuario.getPerfis();
     }
 
-    public PerfilDTO criarPerfil(Long usuarioId, PerfilDTO perfilDTO) {
+    public Perfil criarPerfil(Long usuarioId, Perfil perfil) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        Perfil perfil = new Perfil(perfilDTO.nome(), usuario);
+        perfil.setUsuario(usuario);
         usuario.getPerfis().add(perfil);
         perfilRepository.save(perfil);
-        return mapToDTO(perfil);
+        return perfil;
     }
 
-    public PerfilDTO atualizarPerfil(Long perfilId, PerfilDTO perfilDTO) {
+    public Perfil atualizarPerfil(Long perfilId, Perfil perfilAtualizado) {
         Perfil perfil = perfilRepository.findById(perfilId)
                 .orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
-        perfil.setNome(perfilDTO.nome());
+        perfil.setNome(perfilAtualizado.getNome());
         perfilRepository.save(perfil);
-        return mapToDTO(perfil);
+        return perfil;
     }
 
     @Transactional
@@ -54,17 +50,4 @@ public class PerfilService {
         perfilRepository.delete(perfil);
     }
 
-    private PerfilDTO mapToDTO(Perfil perfil) {
-        return new PerfilDTO(
-                perfil.getNome(),
-                perfil.getComodos().stream().map(comodo -> new ComodoDTO(
-                        comodo.getNome(),
-                        comodo.getAparelhos().stream().map(aparelho -> new AparelhoDTO(
-                                aparelho.getNome(),
-                                aparelho.getPotencia(),
-                                aparelho.getHorasDeUso()
-                        )).collect(Collectors.toSet())
-                )).collect(Collectors.toSet())
-        );
-    }
 }

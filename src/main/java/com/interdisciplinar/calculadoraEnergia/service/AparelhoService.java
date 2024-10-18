@@ -22,29 +22,29 @@ public class AparelhoService {
         this.comodoRepository = comodoRepository;
     }
 
-    public Set<AparelhoDTO> buscarAparelhosPorComodoId(Long comodoId) {
+    public Set<Aparelho> buscarAparelhosPorComodoId(Long comodoId) {
         Comodo comodo = comodoRepository.findById(comodoId)
                 .orElseThrow(() -> new RuntimeException("Cômodo não encontrado"));
-        return comodo.getAparelhos().stream().map(this::mapToDTO).collect(Collectors.toSet());
+        return comodo.getAparelhos();
     }
 
-    public AparelhoDTO criarAparelho(Long comodoId, AparelhoDTO aparelhoDTO) {
+    public Aparelho criarAparelho(Long comodoId, Aparelho aparelho) {
         Comodo comodo = comodoRepository.findById(comodoId)
                 .orElseThrow(() -> new RuntimeException("Cômodo não encontrado"));
-        Aparelho aparelho = new Aparelho(aparelhoDTO.nome(), aparelhoDTO.potencia(), aparelhoDTO.horasDeUso(), comodo);
+        aparelho.setComodo(comodo);
         comodo.getAparelhos().add(aparelho);
         aparelhoRepository.save(aparelho);
-        return mapToDTO(aparelho);
+        return aparelho;
     }
 
-    public AparelhoDTO atualizarAparelho(Long aparelhoId, AparelhoDTO aparelhoDTO) {
+    public Aparelho atualizarAparelho(Long aparelhoId, Aparelho aparelhoAtualizado) {
         Aparelho aparelho = aparelhoRepository.findById(aparelhoId)
                 .orElseThrow(() -> new RuntimeException("Aparelho não encontrado"));
-        aparelho.setNome(aparelhoDTO.nome());
-        aparelho.setPotencia(aparelhoDTO.potencia());
-        aparelho.setHorasDeUso(aparelhoDTO.horasDeUso());
+        aparelho.setNome(aparelhoAtualizado.getNome());
+        aparelho.setPotencia(aparelhoAtualizado.getPotencia());
+        aparelho.setHorasDeUso(aparelhoAtualizado.getHorasDeUso());
         aparelhoRepository.save(aparelho);
-        return mapToDTO(aparelho);
+        return aparelho;
     }
 
     @Transactional
@@ -66,11 +66,4 @@ public class AparelhoService {
         return consumoDiario * 30 * 0.60 * 1.1;
     }
 
-    private AparelhoDTO mapToDTO(Aparelho aparelho) {
-        return new AparelhoDTO(
-                aparelho.getNome(),
-                aparelho.getPotencia(),
-                aparelho.getHorasDeUso()
-        );
-    }
 }

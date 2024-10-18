@@ -42,12 +42,5 @@ public class UsuarioController {
         return "Email do usuário: " + email;
     }
 
-    @PostMapping("/me")
-    public ResponseEntity<Usuario> criarUsuario(@AuthenticationPrincipal UserDetails userDetails) {
-
-        String email = userDetails.getUsername(); // Método para extrair email do token
-        Usuario usuario = usuarioService.criarUsuario(email);
-        return ResponseEntity.ok(usuario);
-    }
 
 }

@@ -1,7 +1,5 @@
 package com.interdisciplinar.calculadoraEnergia.service;
 
-import com.interdisciplinar.calculadoraEnergia.dto.AparelhoDTO;
-import com.interdisciplinar.calculadoraEnergia.dto.ComodoDTO;
 import com.interdisciplinar.calculadoraEnergia.model.Comodo;
 import com.interdisciplinar.calculadoraEnergia.model.Perfil;
 import com.interdisciplinar.calculadoraEnergia.repository.ComodoRepository;
@@ -23,27 +21,27 @@ public class ComodoService {
         this.perfilRepository = perfilRepository;
     }
 
-    public Set<ComodoDTO> buscarComodosPorPerfilId(Long perfilId) {
+    public Set<Comodo> buscarComodosPorPerfilId(Long perfilId) {
         Perfil perfil = perfilRepository.findById(perfilId)
                 .orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
-        return perfil.getComodos().stream().map(this::mapToDTO).collect(Collectors.toSet());
+        return perfil.getComodos();
     }
 
-    public ComodoDTO criarComodo(Long perfilId, ComodoDTO comodoDTO) {
+    public Comodo criarComodo(Long perfilId, Comodo comodo) {
         Perfil perfil = perfilRepository.findById(perfilId)
                 .orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
-        Comodo comodo = new Comodo(comodoDTO.nome(), perfil);
+        comodo.setPerfil(perfil);
         perfil.getComodos().add(comodo);
         comodoRepository.save(comodo);
-        return mapToDTO(comodo);
+        return comodo;
     }
 
-    public ComodoDTO atualizarComodo(Long comodoId, ComodoDTO comodoDTO) {
+    public Comodo atualizarComodo(Long comodoId, Comodo comodoAtualizado) {
         Comodo comodo = comodoRepository.findById(comodoId)
                 .orElseThrow(() -> new RuntimeException("Cômodo não encontrado"));
-        comodo.setNome(comodoDTO.nome());
+        comodo.setNome(comodoAtualizado.getNome());
         comodoRepository.save(comodo);
-        return mapToDTO(comodo);
+        return comodo;
     }
 
     @Transactional
@@ -53,14 +51,4 @@ public class ComodoService {
         comodoRepository.delete(comodo);
     }
 
-    private ComodoDTO mapToDTO(Comodo comodo) {
-        return new ComodoDTO(
-                comodo.getNome(),
-                comodo.getAparelhos().stream().map(aparelho -> new AparelhoDTO(
-                        aparelho.getNome(),
-                        aparelho.getPotencia(),
-                        aparelho.getHorasDeUso()
-                )).collect(Collectors.toSet())
-        );
-    }
 }

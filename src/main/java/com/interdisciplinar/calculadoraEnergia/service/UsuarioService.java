@@ -1,9 +1,5 @@
 package com.interdisciplinar.calculadoraEnergia.service;
 
-import com.interdisciplinar.calculadoraEnergia.dto.AparelhoDTO;
-import com.interdisciplinar.calculadoraEnergia.dto.ComodoDTO;
-import com.interdisciplinar.calculadoraEnergia.dto.PerfilDTO;
-import com.interdisciplinar.calculadoraEnergia.dto.UsuarioDTO;
 import com.interdisciplinar.calculadoraEnergia.model.Aparelho;
 import com.interdisciplinar.calculadoraEnergia.model.Comodo;
 import com.interdisciplinar.calculadoraEnergia.model.Perfil;
@@ -51,24 +47,6 @@ public class UsuarioService {
         novoUsuario.setEmail(email);
         return usuarioRepository.save(novoUsuario);
 
-    }
-
-    public UsuarioDTO mapToDTO(Usuario usuario) {
-        // Implementação simples para mapear entidades para DTO
-        return new UsuarioDTO(
-                usuario.getEmail(),
-                usuario.getPerfis().stream().map(perfil -> new PerfilDTO(
-                        perfil.getNome(),
-                        perfil.getComodos().stream().map(comodo -> new ComodoDTO(
-                                comodo.getNome(),
-                                comodo.getAparelhos().stream().map(aparelho -> new AparelhoDTO(
-                                        aparelho.getNome(),
-                                        aparelho.getPotencia(),
-                                        aparelho.getHorasDeUso()
-                                )).collect(Collectors.toSet())
-                        )).collect(Collectors.toSet())
-                )).collect(Collectors.toSet())
-        );
     }
 
     public double calcularConsumo(Aparelho aparelho) {

@@ -1,12 +1,10 @@
 package com.interdisciplinar.calculadoraEnergia.controller;
 
-import com.interdisciplinar.calculadoraEnergia.dto.PerfilDTO;
-import com.interdisciplinar.calculadoraEnergia.model.Usuario;
+import com.interdisciplinar.calculadoraEnergia.model.Perfil;
 import com.interdisciplinar.calculadoraEnergia.service.PerfilService;
 import com.interdisciplinar.calculadoraEnergia.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -25,7 +23,7 @@ public class PerfilController {
     }
 
     @GetMapping("/me")
-    public CompletableFuture<ResponseEntity<Set<PerfilDTO>>> getPerfisByUsuario(Authentication authentication) {
+    public CompletableFuture<ResponseEntity<Set<Perfil>>> getPerfisByUsuario(Authentication authentication) {
         // Extrair o email do principal autenticado
         String email = (String) authentication.getPrincipal();
 
@@ -34,13 +32,13 @@ public class PerfilController {
                 .thenApply(usuario -> {
                     // Depois que o usuário for retornado, buscar os perfis pelo ID do usuário
                     Long usuarioId = usuario.getId();
-                    Set<PerfilDTO> perfis = perfilService.buscarPerfisPorUsuarioId(usuarioId);
+                    Set<Perfil> perfis = perfilService.buscarPerfisPorUsuarioId(usuarioId);
                     return ResponseEntity.ok(perfis);  // Retorna os perfis no ResponseEntity
                 });
     }
 
     @PostMapping("/me")
-    public CompletableFuture<ResponseEntity<PerfilDTO>> criarPerfil(Authentication authentication, @RequestBody PerfilDTO perfilDTO) {
+    public CompletableFuture<ResponseEntity<Perfil>> criarPerfil(Authentication authentication, @RequestBody Perfil perfilDTO) {
         // Extrair o email do principal autenticado
         String email = (String) authentication.getPrincipal();
 
@@ -49,14 +47,14 @@ public class PerfilController {
                 .thenApply(usuario -> {
                     // Criar o perfil para o usuário autenticado
                     Long usuarioId = usuario.getId();
-                    PerfilDTO perfilCriado = perfilService.criarPerfil(usuarioId, perfilDTO);
+                    Perfil perfilCriado = perfilService.criarPerfil(usuarioId, perfilDTO);
                     return ResponseEntity.ok(perfilCriado); // Retorna o perfil criado no ResponseEntity
                 });
     }
 
     // Endpoint para atualizar um perfil utilizando o usuário autenticado
     @PutMapping("/{perfilId}")
-    public CompletableFuture<ResponseEntity<PerfilDTO>> atualizarPerfil(Authentication authentication, @PathVariable Long perfilId, @RequestBody PerfilDTO perfilDTO) {
+    public CompletableFuture<ResponseEntity<Perfil>> atualizarPerfil(Authentication authentication, @PathVariable Long perfilId, @RequestBody Perfil perfilDTO) {
         // Extrair o email do principal autenticado
         String email = (String) authentication.getPrincipal();
 
@@ -64,7 +62,7 @@ public class PerfilController {
         return usuarioService.buscarUsuarioPorEmailAsync(email)
                 .thenApply(usuario -> {
                     // Atualizar o perfil
-                    PerfilDTO perfilAtualizado = perfilService.atualizarPerfil(perfilId, perfilDTO);
+                    Perfil perfilAtualizado = perfilService.atualizarPerfil(perfilId, perfilDTO);
                     return ResponseEntity.ok(perfilAtualizado); // Retorna o perfil atualizado no ResponseEntity
                 });
     }
