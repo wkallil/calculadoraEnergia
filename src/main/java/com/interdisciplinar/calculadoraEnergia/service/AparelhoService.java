@@ -1,6 +1,5 @@
 package com.interdisciplinar.calculadoraEnergia.service;
 
-import com.interdisciplinar.calculadoraEnergia.dto.AparelhoDTO;
 import com.interdisciplinar.calculadoraEnergia.model.Aparelho;
 import com.interdisciplinar.calculadoraEnergia.model.Comodo;
 import com.interdisciplinar.calculadoraEnergia.repository.AparelhoRepository;
