@@ -5,6 +5,7 @@ import com.interdisciplinar.calculadoraEnergia.service.PerfilService;
 import com.interdisciplinar.calculadoraEnergia.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -38,18 +39,27 @@ public class PerfilController {
     }
 
     @PostMapping("/me")
-    public CompletableFuture<ResponseEntity<Perfil>> criarPerfil(Authentication authentication, @RequestBody Perfil perfilDTO) {
-        // Extrair o email do principal autenticado
-        String email = (String) authentication.getPrincipal();
+    public CompletableFuture<ResponseEntity<Perfil>> criarPerfil(Authentication authentication, @RequestBody Perfil perfil) {
+        // Extraindo o email do objeto UserDetails, que é o principal autenticado
+        String email = getEmailFromAuthentication(authentication);
 
         // Usar CompletableFuture para buscar o usuário de forma assíncrona
         return usuarioService.buscarUsuarioPorEmailAsync(email)
                 .thenApply(usuario -> {
-                    // Criar o perfil para o usuário autenticado
+                    // Criar o perfil associado ao usuário autenticado
                     Long usuarioId = usuario.getId();
-                    Perfil perfilCriado = perfilService.criarPerfil(usuarioId, perfilDTO);
+                    Perfil perfilCriado = perfilService.criarPerfil(usuarioId, perfil);
                     return ResponseEntity.ok(perfilCriado); // Retorna o perfil criado no ResponseEntity
                 });
+    }
+
+    private String getEmailFromAuthentication(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername(); // Ou .getEmail(), dependendo da implementação do UserDetails
+        } else {
+            return principal.toString(); // Se for apenas uma string simples
+        }
     }
 
     // Endpoint para atualizar um perfil utilizando o usuário autenticado
