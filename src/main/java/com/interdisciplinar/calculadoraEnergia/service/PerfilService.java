@@ -5,7 +5,10 @@ import com.interdisciplinar.calculadoraEnergia.model.Usuario;
 import com.interdisciplinar.calculadoraEnergia.repository.PerfilRepository;
 import com.interdisciplinar.calculadoraEnergia.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
+
 import java.util.Set;
 
 
@@ -26,13 +29,11 @@ public class PerfilService {
         return usuario.getPerfis();
     }
 
-    public Perfil criarPerfil(Long usuarioId, Perfil perfil) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    public Perfil criarPerfil(JwtAuthenticationToken authentication, Perfil perfil) {
+        var usuario = usuarioRepository.findById(Long.valueOf(authentication.getName()))
+                .orElseThrow(() -> new RuntimeException(""));
         perfil.setUsuario(usuario);
-        usuario.getPerfis().add(perfil);
-        perfilRepository.save(perfil);
-        return perfil;
+        return perfilRepository.save(perfil);
     }
 
     public Perfil atualizarPerfil(Long perfilId, Perfil perfilAtualizado) {

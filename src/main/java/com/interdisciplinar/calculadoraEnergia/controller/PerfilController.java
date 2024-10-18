@@ -5,7 +5,9 @@ import com.interdisciplinar.calculadoraEnergia.service.PerfilService;
 import com.interdisciplinar.calculadoraEnergia.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -39,18 +41,12 @@ public class PerfilController {
     }
 
     @PostMapping("/me")
-    public CompletableFuture<ResponseEntity<Perfil>> criarPerfil(Authentication authentication, @RequestBody Perfil perfil) {
-        // Extraindo o email do objeto UserDetails, que é o principal autenticado
-        String email = getEmailFromAuthentication(authentication);
+    public ResponseEntity<Perfil> criarPerfil(@AuthenticationPrincipal JwtAuthenticationToken authentication, @RequestBody Perfil perfil) {
+        // Chama o serviço para criar o perfil
+        Perfil perfilCriado = perfilService.criarPerfil(authentication, perfil);
 
-        // Usar CompletableFuture para buscar o usuário de forma assíncrona
-        return usuarioService.buscarUsuarioPorEmailAsync(email)
-                .thenApply(usuario -> {
-                    // Criar o perfil associado ao usuário autenticado
-                    Long usuarioId = usuario.getId();
-                    Perfil perfilCriado = perfilService.criarPerfil(usuarioId, perfil);
-                    return ResponseEntity.ok(perfilCriado); // Retorna o perfil criado no ResponseEntity
-                });
+        // Retorna o perfil criado como resposta
+        return ResponseEntity.ok(perfilCriado);
     }
 
     private String getEmailFromAuthentication(Authentication authentication) {
