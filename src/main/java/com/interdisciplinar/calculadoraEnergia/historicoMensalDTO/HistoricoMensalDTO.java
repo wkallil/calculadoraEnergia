@@ -1,4 +1,6 @@
 package com.interdisciplinar.calculadoraEnergia.historicoMensalDTO;
 
-public record HistoricoMensalDTO(double consumoTotal, double valorTotal) {
+import java.time.LocalDate;
+
+public record HistoricoMensalDTO(double consumoTotal, double valorTotal, LocalDate mes) {
 }

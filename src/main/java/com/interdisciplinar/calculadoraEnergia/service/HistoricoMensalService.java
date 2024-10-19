@@ -52,7 +52,7 @@ public class HistoricoMensalService {
 
         // Map HistoricoMensal to HistoricoMensalDTO
         return historicoMensalList.stream()
-                .map(h -> new HistoricoMensalDTO(h.getConsumoTotal(), h.getValorTotal()))
+                .map(h -> new HistoricoMensalDTO(h.getConsumoTotal(), h.getValorTotal(), h.getMes()))
                 .collect(Collectors.toList());
     }
 
@@ -64,7 +64,7 @@ public class HistoricoMensalService {
 
         // Map HistoricoMensal to HistoricoMensalDTO
         return historicoMensalList.stream()
-                .map(h -> new HistoricoMensalDTO(h.getConsumoTotal(), h.getValorTotal()))
+                .map(h -> new HistoricoMensalDTO(h.getConsumoTotal(), h.getValorTotal(), h.getMes()))
                 .collect(Collectors.toList());
     }
 }
