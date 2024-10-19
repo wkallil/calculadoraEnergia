@@ -30,9 +30,4 @@ public class HistoricoMensalController {
         return ResponseEntity.ok(historico);
     }
 
-    @PostMapping("/gerar")
-    public ResponseEntity<Void> gerarHistoricoMensal() {
-        historicoMensalService.gerarHistoricoMensalParaTodosPerfis();
-        return ResponseEntity.ok().build();
-    }
 }
