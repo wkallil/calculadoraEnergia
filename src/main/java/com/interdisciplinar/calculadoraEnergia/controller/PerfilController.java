@@ -2,9 +2,11 @@ package com.interdisciplinar.calculadoraEnergia.controller;
 
 import com.interdisciplinar.calculadoraEnergia.model.Perfil;
 import com.interdisciplinar.calculadoraEnergia.model.Usuario;
+import com.interdisciplinar.calculadoraEnergia.repository.PerfilRepository;
 import com.interdisciplinar.calculadoraEnergia.repository.UsuarioRepository;
 import com.interdisciplinar.calculadoraEnergia.service.PerfilService;
 import com.interdisciplinar.calculadoraEnergia.service.UsuarioService;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,11 +26,13 @@ public class PerfilController {
     private final PerfilService perfilService;
     private final UsuarioService usuarioService;  // Para buscar o usuário logado
     private final UsuarioRepository usuarioRepository;
+    private final PerfilRepository perfilRepository;
 
-    public PerfilController(PerfilService perfilService, UsuarioService usuarioService, UsuarioRepository usuarioRepository) {
+    public PerfilController(PerfilService perfilService, UsuarioService usuarioService, UsuarioRepository usuarioRepository, PerfilRepository perfilRepository) {
         this.perfilService = perfilService;
         this.usuarioService = usuarioService;
         this.usuarioRepository = usuarioRepository;
+        this.perfilRepository = perfilRepository;
     }
 
     @PostMapping("/criar")
@@ -82,18 +86,20 @@ public class PerfilController {
         }
     }
 
-    // Endpoint para excluir um perfil utilizando o usuário autenticado
+    @Transactional
     @DeleteMapping("/remover/{id}")
     public ResponseEntity<Void> removerPerfil(@PathVariable Long id, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        // Extrai o e-mail do usuário autenticado
         String email = (String) authentication.getPrincipal();
         Usuario usuario = usuarioService.buscarOuCriarUsuarioPorEmail(email);
 
-        // Encontra o perfil do usuário pelo ID
+        if (usuario == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         Optional<Perfil> perfilOptional = usuario.getPerfis().stream()
                 .filter(perfil -> perfil.getId().equals(id))
                 .findFirst();
@@ -101,10 +107,13 @@ public class PerfilController {
         if (perfilOptional.isPresent()) {
             Perfil perfilParaRemover = perfilOptional.get();
             usuario.getPerfis().remove(perfilParaRemover);
+            perfilRepository.delete(perfilParaRemover);  // Remoção manual
+
             usuarioRepository.save(usuario);
+
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        }
+    }
     }
