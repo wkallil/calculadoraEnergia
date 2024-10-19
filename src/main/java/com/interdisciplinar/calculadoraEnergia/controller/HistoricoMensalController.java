@@ -1,5 +1,6 @@
 package com.interdisciplinar.calculadoraEnergia.controller;
 
+import com.interdisciplinar.calculadoraEnergia.historicoMensalDTO.HistoricoMensalDTO;
 import com.interdisciplinar.calculadoraEnergia.model.HistoricoMensal;
 import com.interdisciplinar.calculadoraEnergia.service.HistoricoMensalService;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +19,14 @@ public class HistoricoMensalController {
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<List<HistoricoMensal>> getHistoricoMensalPorUsuario(@PathVariable Long usuarioId) {
-        List<HistoricoMensal> historico = historicoMensalService.buscarHistoricoMensalPorUsuario(usuarioId);
+    public ResponseEntity<List<HistoricoMensalDTO>> getHistoricoMensalPorUsuario(@PathVariable Long usuarioId) {
+        List<HistoricoMensalDTO> historico = historicoMensalService.buscarHistoricoMensalPorUsuario(usuarioId);
         return ResponseEntity.ok(historico);
     }
 
     @GetMapping("/perfil/{perfilId}")
-    public ResponseEntity<List<HistoricoMensal>> getHistoricoMensalPorPerfil(@PathVariable Long perfilId) {
-        List<HistoricoMensal> historico = historicoMensalService.buscarHistoricoMensalPorPerfil(perfilId);
+    public ResponseEntity<List<HistoricoMensalDTO>> getHistoricoMensalPorPerfil(@PathVariable Long perfilId) {
+        List<HistoricoMensalDTO> historico = historicoMensalService.buscarHistoricoMensalPorPerfil(perfilId);
         return ResponseEntity.ok(historico);
     }
 
